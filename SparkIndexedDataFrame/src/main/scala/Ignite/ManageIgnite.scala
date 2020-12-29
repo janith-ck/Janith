@@ -13,7 +13,7 @@ import org.apache.spark.sql.{DataFrame, Row, SQLContext}
 
 class ManageIgnite {
 
-  private val CFG_PATH = sys.env("INDEX_IGNITE_XML") /* "G:\\Education\\Spark\\Janith\\SparkIndexedDataFrame\\ignite.xml"*/
+  private val CFG_PATH = sys.env("INDEX_IGNITE_XML")
   private val MAVEN_HOME = sys.env("INDEX_MAVEN_HOME")  /*"C:\\Users\\Janith\\.m2\\repository"*/
 
   def SaveIndexToIgnite(df:DataFrame,tableName:String,sqlContext: SQLContext,index_col: List[String]):RDD[Row] ={
@@ -25,7 +25,7 @@ class ManageIgnite {
         option(OPTION_CONFIG_FILE, CFG_PATH).
         option(OPTION_SCHEMA, "PUBLIC").
         option(OPTION_TABLE, tableName).
-        option(OPTION_CREATE_TABLE_PRIMARY_KEY_FIELDS, "UserId").
+        option(OPTION_CREATE_TABLE_PRIMARY_KEY_FIELDS, index_col.head).
         option(OPTION_STREAMER_ALLOW_OVERWRITE, true).
         option(OPTION_CREATE_TABLE_PARAMETERS, "backups=0").
         save()
@@ -34,12 +34,7 @@ class ManageIgnite {
       val ccfg = new CacheConfiguration[JLong, JString](CACHE_NAME).setSqlSchema("PUBLIC")
       val cache = ignite.getOrCreateCache(ccfg)
 
-
       cache.query(new SqlFieldsQuery("CREATE INDEX on " + tableName + " (" + index_col.mkString(",") + ")")).getAll
-      //cache.query(new SqlFieldsQuery("CREATE INDEX on "+tableName+" (Id asc)")).getAll
-
-      // igniteSession.sqlContext.sql("CREATE INDEX IF NOT EXISTS "+tableName+"_IDX ON \"PUBLIC\"."+tableName+"("+index_col(0)+")")
-
 
       println("tabled saved " + tableName)
     }

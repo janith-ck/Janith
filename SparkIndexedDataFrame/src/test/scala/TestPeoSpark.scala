@@ -7,9 +7,9 @@ import org.apache.spark.sql.SparkSession
 object TestPeoSpark extends App {
   private val masterUrl = "spark://127.0.0.10:7077"
   private val appName = "IndexDataFrameTest1"
-  val filenameleft = "ResearchSample10"
-  val filenameright = "ResearchResponse10"
-  val path = "G:\\Education\\Spark\\Janith\\ExtendDataFrameReader\\Testdata\\"
+  val filenameleft = "ResearchSample1"
+  val filenameright = "ResearchResponse1"
+  val path = "D:\\Education\\Spark\\Testdata\\"
 
   val sparkConf = new SparkConf()
     .setAppName(appName)
@@ -46,13 +46,13 @@ object TestPeoSpark extends App {
   timer = Calendar.getInstance.getTimeInMillis()
   //val r2 = sparkSession.sql("select * from "+filenameleft+" s join "+filenameright+" r on s.UserId = r.UserId and s.ProjectId = r.ProjectId order by r.UserId")
   val r2 = sparkSession.sql("select r.UserId,r.value from "+filenameleft+" s join "+filenameright+" r on s.UserId = r.UserId and s.ProjectId = r.ProjectId order by r.UserId")
-  r2.show()
+ // r2.show()
   println("Joined in 2---" + (Calendar.getInstance.getTimeInMillis() - timer))
 
   timer = Calendar.getInstance.getTimeInMillis()
   //val r3 = sparkSession.sql("select * from "+filenameleft+" s join "+filenameright+" r on s.UserId = r.UserId and s.ProjectId = r.ProjectId order by r.UserId")
   val r3 = sparkSession.sql("select r.UserId,r.value from "+filenameleft+" s join "+filenameright+" r on s.UserId = r.UserId and s.ProjectId = r.ProjectId order by r.UserId")
-  r3.show()
+  //r3.show()
   println("Joined in 3---" + (Calendar.getInstance.getTimeInMillis() - timer))
 
   scala.io.StdIn.readLine()

@@ -12,7 +12,7 @@ object TestIndexedDFOutputforReport extends App{
   val source_type = IndexedFrameType.Csv //Source type
   val filenameleft = "ResearchSample10"
   val filenameright = "ResearchResponse10"
-  val path = "G:\\Education\\Spark\\Janith\\ExtendDataFrameReader\\Testdata\\Morethan1M\\"
+  val path = "D:\\Education\\Spark\\Testdata\\Morethan1M\\"
 
   var timer = Calendar.getInstance.getTimeInMillis()
   // Read external data source as indexed frame

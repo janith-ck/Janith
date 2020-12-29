@@ -8,7 +8,7 @@ object TestPeoSparkforOutputforReport extends App {
   private val appName = "IndexDataFrameTest1"
   val filenameleft = "ResearchSample10"
   val filenameright = "ResearchResponse10"
-  val path = "G:\\Education\\Spark\\Janith\\ExtendDataFrameReader\\Testdata\\"
+  val path = "D:\\Education\\Spark\\Testdata\\"
 
   val sparkConf = new SparkConf()
     .setAppName(appName)

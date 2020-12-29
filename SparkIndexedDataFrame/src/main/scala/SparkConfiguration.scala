@@ -1,6 +1,5 @@
 import Ignite.IgniteSingleton
 import org.apache.spark.SparkConf
-import org.apache.spark.sql.catalyst.parser.MyCatalystSqlParser
 import org.apache.spark.sql.{SparkSession, SparkSessionExtensions}
 
 //Initialize spark session
@@ -13,10 +12,6 @@ object SparkConfiguration {
   def InitializeSpark: SparkSession = {
 
     type ExtensionsBuilder = SparkSessionExtensions => Unit
-    def create(builder: ExtensionsBuilder): ExtensionsBuilder = builder
-    val extension = create { extensions =>
-      extensions.injectParser((_, _) => MyCatalystSqlParser)
-    }
 
     val sparkConf = new SparkConf()
       .setAppName(appName)
@@ -24,7 +19,7 @@ object SparkConfiguration {
 
     val sparkSession = SparkSession
       .builder()
-      .config(sparkConf).withExtensions(extension).master(masterUrl)
+      .config(sparkConf).master(masterUrl)
       .getOrCreate()
 
     sparkSession.sparkContext.setLogLevel("ERROR")

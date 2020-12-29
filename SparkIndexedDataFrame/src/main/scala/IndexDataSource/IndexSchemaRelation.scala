@@ -17,7 +17,6 @@ class IndexSchemaRelation(val sqlContext: SQLContext,  val cols:List[String], va
   override def schema = sch
 
   override def buildScan(): RDD[Row] = {
-    var d = Calendar.getInstance.getTimeInMillis()
     var ig = new ManageIgnite()
     ig.SaveIndexToIgnite(df,fileName,sqlContext,cols)
   }

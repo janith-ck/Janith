@@ -3,7 +3,9 @@ package IndexDatasource
 import java.io.File
 
 import Ignite.IgniteSingleton
+import IndexDataSource.native.NativeSparkDataSourceFactory
 import org.apache.commons.io.FilenameUtils
+import org.apache.spark.sql.execution.datasources.csv.CSVDataSource
 import org.apache.spark.sql.{Column, DataFrame, SQLContext}
 import org.apache.spark.sql.sources.{BaseRelation, DataSourceRegister, RelationProvider, SchemaRelationProvider}
 import org.apache.spark.sql.types.{IntegerType, StringType, StructField, StructType}
@@ -20,15 +22,15 @@ class IndexSchemaDataSource extends DataSourceRegister with RelationProvider{
     val sourceType = parameters("SourceFormat")
     val index_column = parameters("IndexColumn")
     var df:DataFrame = null
+
     IgniteSingleton.GetIgnite(sqlContext)
 
     val fd = new File(path)
     val fileName = FilenameUtils.getBaseName(fd.getName())
 
-    if(sourceType=="Csv"){
-      df = sqlContext.sparkSession.read.option("header",true).format("csv").load(path).cache()
-      //df.createOrReplaceTempView(fileName+"_")
-    }
+    //Data source factory
+    df = NativeSparkDataSourceFactory.getDataSource(sourceType,parameters("schema")).read(path,sqlContext)
+
     var c = df.schema
     var simpleSchema = new StructType(Array())
 
@@ -43,8 +45,6 @@ class IndexSchemaDataSource extends DataSourceRegister with RelationProvider{
     //val cols: List[String] = index_column.split(",").toList
     val col: List[Column] = cols.map(df(_))
     val indexFrame = df.select(col:_*)
-
-
 
     new IndexSchemaRelation(sqlContext, cols,df,path,simpleSchema,fileName)
   }

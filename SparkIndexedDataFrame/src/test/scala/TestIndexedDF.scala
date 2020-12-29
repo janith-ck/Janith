@@ -10,22 +10,27 @@ object TestIndexedDF extends App{
   val sparkSession = SparkConfiguration.InitializeSpark
 
   //Parameters
-  val index_columns = "Id,UserId" //Index columns
+  val index_columns = "UserId,ProjectId" //Index columns and primary key (pk should be initial one)
   val source_type = IndexedFrameType.Csv //Source type
-  val filenameleft = "ResearchSample10"
-  val filenameright = "ResearchResponse10"
-  val path = "G:\\Education\\Spark\\Janith\\ExtendDataFrameReader\\Testdata\\Morethan1M\\"
+  val filenameleft = "ResearchSample8"
+  val filenameright = "ResearchResponse8"
+  val all_columns_sample = "Id,UserId,ProjectId" // this is to define schema for JSON
+  val all_columns_response = "Id,UserId,ProjectId,Value" // this is to define schema for JSON
+
+  val path = "D:\\Education\\Spark\\Testdata\\"
 
   var timer = Calendar.getInstance.getTimeInMillis()
   // Read external data source as indexed frame
   val ldf = sparkSession.read.format("index")
     .option("IndexColumn",index_columns)
     .option("SourceFormat",source_type.toString)
+    .option("schema",all_columns_sample)
     .load(path+filenameleft+".csv")
 
   val rdf = sparkSession.read.format("index")
     .option("IndexColumn",index_columns)
     .option("SourceFormat",source_type.toString)
+    .option("schema",all_columns_response)
     .load(path+filenameright+".csv")
 
   ldf.show()
@@ -39,20 +44,20 @@ object TestIndexedDF extends App{
 
   //join ops
   timer = Calendar.getInstance.getTimeInMillis()
-  val r =  sparkSession.sql("select * from "+filenameleft+" s join "+filenameright+" r on s.UserId = r.UserId order by r.UserId")
-  //val r =  sparkSession.sql("select r.UserId,r.value from "+filenameleft+" s join "+filenameright+" r on s.UserId = r.UserId order by r.UserId")
+  //val r =  sparkSession.sql("select * from "+filenameleft+" s join "+filenameright+" r on s.UserId = r.UserId and s.projectId = r.projectId order by r.UserId")
+  val r =  sparkSession.sql("select r.UserId,r.value from "+filenameleft+" s join "+filenameright+" r on s.UserId = r.UserId order by r.UserId")
   r.show()
   println("Joined in 1 --- " + ( Calendar.getInstance.getTimeInMillis() - timer ) + " ms")
 
   timer = Calendar.getInstance.getTimeInMillis()
-  val r1 =  sparkSession.sql("select * from "+filenameleft+" s join "+filenameright+" r on s.UserId = r.UserId order by r.UserId")
-  //val r1 =  sparkSession.sql("select r.UserId,r.value from "+filenameleft+" s join "+filenameright+" r on s.UserId = r.UserId order by r.UserId")
+  //val r1 =  sparkSession.sql("select * from "+filenameleft+" s join "+filenameright+" r on s.UserId = r.UserId and s.projectId = r.projectId order by r.UserId")
+  val r1 =  sparkSession.sql("select r.UserId,r.value from "+filenameleft+" s join "+filenameright+" r on s.UserId = r.UserId order by r.UserId")
   r1.show()
   println("Joined in 2 --- " + ( Calendar.getInstance.getTimeInMillis() - timer ) + " ms")
 
   timer = Calendar.getInstance.getTimeInMillis()
-  val r3 =  sparkSession.sql("select * from "+filenameleft+" s join "+filenameright+" r on s.UserId = r.UserId order by r.UserId")
-  //val r3 =  sparkSession.sql("select r.UserId,r.value from "+filenameleft+" s join "+filenameright+" r on s.UserId = r.UserId order by r.UserId")
+  //val r3 =  sparkSession.sql("select * from "+filenameleft+" s join "+filenameright+" r on s.UserId = r.UserId and s.projectId = r.projectId order by r.UserId")
+  val r3 =  sparkSession.sql("select r.UserId,r.value from "+filenameleft+" s join "+filenameright+" r on s.UserId = r.UserId order by r.UserId")
   r3.show()
   println("Joined in 3 --- " + ( Calendar.getInstance.getTimeInMillis() - timer ) + " ms")
 
